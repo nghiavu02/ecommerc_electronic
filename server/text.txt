@@ -1,0 +1,44 @@
+
+
+1.User
+Thuộc tính:_id fullname, email, password, mobile,role ,image, address, cart, wishlist, refreshToken, passwordChangeAt, 
+passwordResetToken, passwordExpires,
+-chức năng: register V, login V, logout v, lấy thông 1 user v, lấy users v, update user v, update user by admin v, delete user v, 
+update address, upload image, refreshToken, forgot password, reset password, update cart, update wishlifa-stack
+2.Product 
+-Thuộc tính:_id, name, slug,price, description, images,brand, product category, rating,  totalRating
+-Chức năng: create product, update product, delete product, get 1 product, get many product, update rating, upload image
+3.brand
+-Thuộc tính: _id, name
+-chức năng:create, update, delete, get 1, get all 
+4.Color
+-Thuộc tính: _id, name
+-chức năng:create, update, delete, get 1, get all  
+5.Product category
+-Thuộc tính: _id, name
+-chức năng:create, update, delete, get 1, get all  
+6.Blog
+-Thuộc tính: _id, name
+-chức năng:create, update, delete, get 1, get all  
+7.Blog category
+-Thuộc tính: _id, title, description, blog category, number view, is like, is dislike, likes, dislikes, author, 
+-chức năng:create blog, update blog, get blog, get blogs, like blog, dislike blog, delete blog
+8.Order 
+-Thuộc tính: _id, product(name,quantity, color), total, status, order by
+-chức năng: create order, update Status,get user order, get Order
+
+
+
+try {
+        const rs = 1
+        return res.status(200).json({
+            success: rs ? true : false,
+            message: rs ? 'Thành công' : 'Thất bại',
+            data: rs ? rs : null
+        })
+    } catch (error) {
+        res.status(504).json({
+            success: false,
+            message: ` Có lỗi xảy ra: ${error.message}`
+        })
+    }
