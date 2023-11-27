@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'User'
     },
-    imgae: {
+    image: {
         type: String
     },
     cart: [

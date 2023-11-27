@@ -179,14 +179,12 @@ const updateAddress = async(req, res) =>{
 const uploadImage = async(req, res) =>{
     try {
         const {uid} = req.user
-        if(!req.files) throw new Error('Missing inputs')
-        // const rs = await User.findByIdAndUpdate(uid, {image: req.file.path}, {new: true})
-        console.log(1)
-        const rs = 1
+        if(!req.file) throw new Error('Missing inputs')
+        const rs = await User.findByIdAndUpdate(uid, {image: req.file.path}, {new: true})
         return res.status(200).json({
             success: rs ? true : false,
             message: rs ? 'hành công' : 'Thất bại',
-            data: rs
+            data: rs,
         })
     } catch (error) {
         res.status(504).json({

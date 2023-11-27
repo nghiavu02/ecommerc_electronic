@@ -4,10 +4,10 @@
 Thuộc tính:_id fullname, email, password, mobile,role ,image, address, cart, wishlist, refreshToken, passwordChangeAt, 
 passwordResetToken, passwordExpires,
 -chức năng: register V, login V, logout v, lấy thông 1 user v, lấy users v, update user v, update user by admin v, delete user v, 
-update address, upload image, refreshToken, forgot password, reset password, update cart, update wishlifa-stack
+update address v, upload image v, refreshToken X, forgot password X, reset password X, update cart X, update wishlifa-stack X
 2.Product 
--Thuộc tính:_id, name, slug,price, description, images,brand, product category, rating,  totalRating
--Chức năng: create product, update product, delete product, get 1 product, get many product, update rating, upload image
+-Thuộc tính:_id, title, slug,price, description, images,brand, product category, rating,  totalRating
+-Chức năng: create product v, update product v, delete product v, get 1 product v, get many product v, update rating, upload image
 3.brand
 -Thuộc tính: _id, name
 -chức năng:create, update, delete, get 1, get all 
