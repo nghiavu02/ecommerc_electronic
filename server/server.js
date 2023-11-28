@@ -12,7 +12,6 @@ app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 db.connect()
 app.use(cookieParser())
-
 route(app)
 
 

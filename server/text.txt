@@ -7,8 +7,8 @@ passwordResetToken, passwordExpires,
 update address v, upload image v, refreshToken X, forgot password X, reset password X, update cart X, update wishlifa-stack X
 2.Product 
 -Thuộc tính:_id, title, slug,price, description, images,brand, product category, rating,  totalRating
--Chức năng: create product v, update product v, delete product v, get 1 product v, get many product v, update rating, upload image
-3.brand
+-Chức năng: create product v, update product v, delete product v, get 1 product v, get many product v, update rating v, upload image v
+3.brand X Bỏ
 -Thuộc tính: _id, name
 -chức năng:create, update, delete, get 1, get all 
 4.Color

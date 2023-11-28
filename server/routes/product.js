@@ -1,8 +1,9 @@
 const ctrls = require('../controllers/product')
 const router = require('express').Router()
-const uploadImage = require('../config/cloudinary.config')
+const fileUploader = require('../config/cloudinary.config')
 const {verifyAccessToken, isAdmin} = require('../middlewares/verifyToken')
+router.post('/cloudinary-upload/:pid',[verifyAccessToken, isAdmin], fileUploader.array('images', 10), ctrls.upload)
 router.put('/rating',[verifyAccessToken], ctrls.rating)
-// router.put('/rating',[verifyAccessToken, isAdmin], uploadImage.array('images', 10), ctrls.)
+router.post('/',[verifyAccessToken,isAdmin], ctrls.create)
 
 module.exports = router

@@ -8,7 +8,7 @@ const create = async(req, res)=>{
         const rs = await Product.create(req.body)
         return res.status(200).json({
             success: rs ? true : false,
-            message: rs ? 'Cập nhật sản phẩm thành công' : 'Cập nhật sản phẩm thất bại',
+            message: rs ? 'Thêm sản phẩm thành công' : 'Thêm sản phẩm thất bại',
             data: rs ? rs : null
         })
     } catch (error) {
@@ -119,24 +119,23 @@ const deleteById = async(req, res) =>{
 //Thêm và update đánh giá
 const rating = async(req, res) =>{
     try {
-        const {uid} = req.user
-        const {star, comment, pid} = req.body
-        if(!pid || !uid) throw new Error('Missing inputs')
-        const product = await Product.findById(pid).select('ratings')
-        const checkUser = product.ratings.find(item => item.postedBy.toObject() == uid)
-        if(checkUser){
-            //update
-            await Product.updateOne({ratings: {$elemMatch: {postedBy: uid}}}, {$set : { 'ratings.$.star': star, 'ratings.$.comment': comment}})
-        }
+        const {uid} = req.user 
+        const {star, comment , pid} = req.body
+        if(!uid || !pid || Object.keys(req.body).length == 0) throw new Error('Missing input')
+        const product = await Product.findById(pid)
+        const checkRating = product.ratings.find(item => item.postedBy.toString() == uid)
+        if(checkRating){
+            //update rating
+            await Product.updateOne({ratings: {$elemMatch: {postedBy: uid}}}, {$set: {'ratings.$.star': star, 'ratings.$.comment': comment}})
+        }   
         else{
-            //thêm mới
-            await Product.findByIdAndUpdate(pid, { $push : {star, comment, postedBy: uid}}, {new: true})
+            //push rating
+            await Product.findByIdAndUpdate(pid, {$push: {star, comment, postedBy: uid}})
         }
         const rs = await Product.findById(pid)
         const countRating = rs.ratings.length
-        const sumStart = rs.ratings.reduce((sum, item) => item.star + sum, 0)
-        rs.totalRating = Math.ceil(sumStart / countRating / 10) * 10
-        rs.save()
+        const sumStar = rs.ratings.reduce((sum, item)=> item.star + sum, 0)
+        rs.totalRating = Math.ceil(sumStar*10/countRating) /10
         return res.status(200).json({
             success: rs ? true : false,
             message: rs ? 'Thành công': 'Thất bại',
@@ -149,6 +148,26 @@ const rating = async(req, res) =>{
         })
     }
 }
+//Upload Image
+const upload = async(req, res) =>{
+    try {
+        console.log(req.files)
+        const {pid} = req.params
+        if(!req.files) throw new Error('Missing iniput')
+        const rs = await Product.findByIdAndUpdate(pid, {$push: {images: {$each: req.files.map(item => item.path)}}}, {new: true})
+        return res.status(200).json({
+            succcess: rs ?true : false,
+            message: rs ? 'Thành công': 'Thất bại',
+            data: rs
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: true,
+
+            messsage: ` CÓ lỗi xảy ra: ${error.message}`
+        })
+    }
+}
 
 module.exports = {
     create,
@@ -156,5 +175,6 @@ module.exports = {
     getAll,
     updateById,
     deleteById,
-    rating
+    rating,
+    upload
 }
