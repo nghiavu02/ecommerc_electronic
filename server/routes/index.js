@@ -7,6 +7,7 @@ const couponRouter = require('./coupon')
 const brandRouter = require('./brand')
 const blogRouter = require('./blog')
 const orderRouter = require('./order')
+const insertRouter = require('./inserData')
 
 function initRoutes(app){
     app.use('/api/coupon', couponRouter)
@@ -18,6 +19,7 @@ function initRoutes(app){
     app.use('/api/brand', brandRouter)
     app.use('/api/blog', blogRouter)
     app.use('/api/order', orderRouter)
+    app.use('/api/insert', insertRouter)
 }
 
 module.exports = initRoutes

@@ -13,8 +13,7 @@ const productSchema = new mongoose.Schema({
         lowercase: true
     },
     description: {
-        type: String,
-        required: true
+        type: Array
     },
     brand: {
         type: String,
@@ -28,9 +27,8 @@ const productSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'ProductCategory'
     },
-    quatity: {
+    quantity: {
         type: Number,
-        default: 0
     },
     sold: {
         type: Number,
@@ -41,7 +39,6 @@ const productSchema = new mongoose.Schema({
     },
     color: {
         type: String,
-        enum: ['black', 'yellow', 'red', 'pink', 'white'],
     },
     ratings: [
         {
@@ -54,6 +51,7 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    thumb: String,
 },{
     timestamps: true
 })

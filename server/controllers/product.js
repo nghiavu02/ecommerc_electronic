@@ -1,5 +1,6 @@
 const Product = require('../models/product')
 const slugify = require('slugify')
+const asyncHandler = require('express-async-handler')
 //Thêm sản phẩm bởi admin
 const create = async(req, res)=>{
     try {
@@ -36,48 +37,51 @@ const getById = async(req, res)=>{
     }
 }
 //lấy danh sách sản phẩm
-const getAll = async(req, res, next) =>{
-    try {
-        const input = {...req.query}
-        const mang = ['page', 'limit', 'sort', 'fields']
-        mang.forEach(item => delete input[mang])
-        let inputString = JSON.stringify(input)
-        inputString = inputString.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`)
-        let inputs = JSON.parse(inputString)
-        if(input?.title) inputs.title = {$regex: input.title, $options: 'i'}
-        let product = Product.find(inputs)
+const getAll = asyncHandler(async (req, res, next) => {
+    const queries = { ...req.query }
+    const excludedFields = ['page', 'sort', 'limit', 'fields']
+    excludedFields.forEach(item => delete queries[item])
+    //advanced filtering 
+    let queryString = JSON.stringify(queries)
+    //tìm chỗi gte thay thế bằng => $get
+    queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`)
+    const formatedQueries = JSON.parse(queryString)
 
-        //sort
-        if(req.query?.sort){
-            const sortBy = req.query.sort.split(',').join(' ')
-            product =  product.sort(sortBy)
-        }
-        //fields
-        if(req.query?.fields){
-            const fields = req.query.fields.split(',').join(' ')
-            product = product.select(fields)
-        }
-        //pagination
-        const limit = req.query.limit * 1 || 20
-        const page = req.query.page * 1 || 1
-        const skip = (page -1) * limit
-        product.skip(skip).limit(limit)
-
-        product.then(rs =>{
-            return res.status(200).json({
-                success: rs ? true : false,
-                message: rs ? 'thành công': 'thất bại',
-                data: rs
-            })
-        }).catch(next)
-        
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: ` Có lỗi xảy ra: ${error.message}`
-        })
+    //filtering
+    //regex: , 'i': không phân biệt hoa thường
+    if (queries?.name) formatedQueries.name = { $regex: queries.name, $options: 'i' }
+    let queryCommand = Product.find(formatedQueries)
+    //sorting
+    if (req.query.sort) {
+        const sortBy = req.query.sort.split(',').join(' ')
+        queryCommand = queryCommand.sort(sortBy)
     }
-}
+    else {
+        queryCommand = queryCommand.sort('-createAt')
+    }
+    //Field limiting
+    if (req.query.fields) {
+        const fields = req.query.fields.split(',').join(' ')
+        queryCommand = queryCommand.select(fields)
+    }
+
+    //Pagination
+    const page = +req.query.page * 1 || 1;
+    const limit = +req.query.limit * 1 || 10;
+    const skip = (page - 1) * limit;
+    queryCommand = queryCommand.skip(skip).limit(limit);
+    //  Execute query
+    queryCommand.then(async (response) => {
+        const counts = await Product.find(formatedQueries).countDocuments()
+        res.status(200).json({
+            success: response ? true : false,
+            message: response ? "Lấy ra sản phẩm" : "lấy sản phẩm thất bại",
+            counts,
+            page,
+            products: response ? response : null,
+        })
+    }).catch(next)
+})
 //Cập nhật sản phẩm bởi admin
 const updateById = async(req, res)=>{
     try {

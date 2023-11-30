@@ -41,7 +41,7 @@ const getAll = async(req, res) =>{
         return res.status(200).json({
             success: rs ? true: false,
             message: rs ? 'thàn công': 'thất bại',
-            data: rs
+            productCategory: rs
         })
     } catch (error) {
         res.status(500).json({
