@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from "react";
-import { apiCategories } from "../apis/app";
-import {NavLink, useRoutes} from 'react-router-dom'
+import React from "react";
+import {NavLink} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 const Sidebar = ()=>{
     const {categories} = useSelector((state) => state.app)

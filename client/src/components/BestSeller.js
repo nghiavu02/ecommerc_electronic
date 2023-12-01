@@ -6,39 +6,45 @@ import Slider from "react-slick";
 const tabs = [
     {id: 1, name: 'Best Seller'},
     {id: 2, name: 'New Arrivals'},
-    {id: 3, name: 'Tablet'},
 ]
-const arr = [1,2,3,4,5,6,7,8]
 const settings = {
-    dots: true,
+    dots: false,
     infinite: true,
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1
   };
 const BestSeller = () =>{
-    const [bestsellers, setBestSellers] = useState([])
-    const [newProduccts, setNewProducts] = useState([])
+    const [bestsellers, setBestSellers] = useState(null)
+    const [newProduccts, setNewProducts] = useState(null)
     const [actived, setActived] = useState(1)
+    const [products, setProducts] = useState(null)
     const fetchProduct = async ()=>{
         const response = await Promise.all([apiGetProduct({sort: '-sold'}), apiGetProduct({sort: '-createAt'})])
-        if(response[0]?.success) setBestSellers(response[0].products)
+        if(response[0]?.success) {
+            setBestSellers(response[0].products)
+            setProducts(response[0].products)
+        }
         if(response[1]?.success) setNewProducts(response[1].products)
     }
     useEffect(()=>{
         fetchProduct()
     },[])
+    useEffect(()=>{
+        if(actived == 1) setProducts(bestsellers)
+        if(actived == 2) setProducts(newProduccts)
+    },[actived])
     return (
         <div>
-            <div className="uppercase font-semibold text-[20px] pb-4 mb-6 border-b-2 border-main" >
+            <div className="uppercase font-semibold text-[20px] pb-4 ml-[-32px] " >
             {tabs?.map((item) => (
-                <span onClick={()=> setActived(item.id)} className={`pr-8 cursor-pointer  ${actived == item.id ? 'opacity-100': 'opacity-50'} `}>{item.name}</span>
+                <span onClick={()=> setActived(item.id)} className={`px-8 cursor-pointer border-r  ${actived == item.id ? 'opacity-100': 'opacity-50'} `}>{item.name}</span>
             ))}
             </div>
-            <div className="w-full ">
+            <div className="w-full border-t-2 border-main pt-6" >
                 <Slider {...settings} className="mr-[-20px]">
-                    {bestsellers?.map((item, index) => (
-                       <Product key={item.id} productData={item}  className=""/>
+                    {products?.map((item, index) => (
+                       <Product key={item.id} productData={item} isNew={actived == 1 ? false : true}  className=""/>
                         
                     ))} 
                     
